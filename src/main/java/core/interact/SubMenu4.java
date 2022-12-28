@@ -2,6 +2,10 @@ package core.interact;
 
 import async.TaskPool;
 import async.task.NetScanTask;
+import config.Global;
+import constant.Network;
+import constant.lang.OutputFactory;
+import util.NetUtil;
 import java.util.InputMismatchException;
 
 /**
@@ -12,18 +16,22 @@ import java.util.InputMismatchException;
 public class SubMenu4 {
 
     /**
-     * 处理方法
+     * 处理方法 handle method
      */
     public static void handle() {
-        System.out.print("[*] 域名: ");
+        System.out.print(OutputFactory.getInputDomain(Global.RUNTIME_LANGUAGE));
         String domain = "";
         try {
             domain = InputScanner.getScanner().next();
         } catch (InputMismatchException e) {
-            System.out.println("域名读取失败");
+            NetUtil.wrongDomain(Global.RUNTIME_LANGUAGE);
         }
-        System.out.println("\n[1] 常用端口扫描\n[2] 特定端口扫描\n[3] 全扫描\n[4] 返回\n[*] 退出\n");
-        System.out.print("选择: ");
+        if(!NetUtil.checkDomain(domain)) {
+            NetUtil.wrongDomain(Global.RUNTIME_LANGUAGE);
+            System.exit(0);
+        }
+        System.out.println(OutputFactory.getScanType(Global.RUNTIME_LANGUAGE));
+        System.out.print(OutputFactory.getSELECT(Global.RUNTIME_LANGUAGE));
         int select = 0;
         try {
             select = InputScanner.getScanner().nextInt();
@@ -32,27 +40,37 @@ public class SubMenu4 {
         }
         switch(select) {
             // 常见端口扫描
-            case 1: NetScanTask.runDomainSimpleScanTask(TaskPool.maxThreads, domain); break;
+            case 1:
+                System.out.println();
+                NetScanTask.runDomainSimpleScanTask(TaskPool.maxThreads, domain);
+                break;
             // 特定端口扫描
             case 2:
-                System.out.print("[*] 端口: ");
+                System.out.print(OutputFactory.getInputPort(Global.RUNTIME_LANGUAGE));
                 int port = -1;
                 try {
                     port = InputScanner.getScanner().nextInt();
-                    if(port < 0) {
-                        throw new IllegalArgumentException();
+                    if(port < 0 || port > Network.PORT_END) {
+                        NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
+                        System.exit(0);
                     }
                 } catch (Exception e) {
-                    System.out.println("端口号读取失败");
+                    NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                 }
-                NetScanTask.runDomainScanTask(TaskPool.maxThreads, port, domain); break;
+                System.out.println();
+                NetScanTask.runDomainScanTask(TaskPool.maxThreads, port, domain);
+                break;
             // 全扫描
-            case 3: NetScanTask.runDomainFullScanTask(TaskPool.maxThreads, domain); break;
+            case 3:
+                System.out.println();
+                NetScanTask.runDomainFullScanTask(TaskPool.maxThreads, domain);
+                break;
             // 返回
-            case 4: MainMenu.handle();
+            case 4:
+                MainMenu.handle();
             // 任意其他按键退出
             default:
-                System.out.println("\nGoodbye!");
+                System.out.println(OutputFactory.getGoodBye(Global.RUNTIME_LANGUAGE));
                 System.exit(0);
         }
     }

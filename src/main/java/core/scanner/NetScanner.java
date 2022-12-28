@@ -1,6 +1,8 @@
 package core.scanner;
 
+import config.Global;
 import constant.Network;
+import constant.lang.OutputFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,9 +44,11 @@ public class NetScanner {
             try {
                 Socket s = new Socket();
                 String ip = NetUtil.numberToIp(i);
-                s.connect(new InetSocketAddress(ip, port), Network.SOCKET_TIMEOUT);
-                System.out.println("[+] " + ip + ":" + port + " 端口开放");
-                s.close();
+                if(!NetUtil.isBorder(ip) && !NetUtil.isLoopback(ip)) {
+                    s.connect(new InetSocketAddress(ip, port), Network.SOCKET_TIMEOUT);
+                    System.out.println("[+] " + ip + ":" + port + OutputFactory.getOpeningPort(Global.RUNTIME_LANGUAGE));
+                    s.close();
+                }
             } catch (IOException e) {
                 // 不做处理
             }
@@ -54,23 +58,29 @@ public class NetScanner {
     /** 全端口扫描 scan all ports */
     public void fullScan() {
         LongStream.range(start, end + 1).forEach(i -> {
-            scanner.setTarget(NetUtil.numberToIp(i));
-            scanner.setStart(0);
-            scanner.setEnd(65535);
-            scanner.fullScan();
+            String ip = NetUtil.numberToIp(i);
+            if(!NetUtil.isBorder(ip) && !NetUtil.isLoopback(ip)) {
+                scanner.setTarget(ip);
+                scanner.setStart(Network.PORT_START);
+                scanner.setEnd(Network.PORT_END);
+                scanner.fullScan();
+            }
         });
     }
 
     /** 常用端口扫描 scan ports which are used frequently */
     public void simpleScan() {
         LongStream.range(start, end + 1).forEach(i -> {
-            scanner.setTarget(NetUtil.numberToIp(i));
-            scanner.simpleScan();
+            String ip = NetUtil.numberToIp(i);
+            if(!NetUtil.isBorder(ip) && !NetUtil.isLoopback(ip)) {
+                scanner.setTarget(ip);
+                scanner.simpleScan();
+            }
         });
     }
 
     /**
-     * 目标集合指定端口扫描 scan a port in an IP range
+     * 目标集合指定端口扫描 scan a port in range
      *
      * @param addresses 目标集合 target host collection
      * @param start 开始索引 start index
@@ -79,13 +89,16 @@ public class NetScanner {
      */
     public void collectionScan(InetAddress[] addresses, int start, int end, int port) {
         IntStream.range(start, end + 1).forEach(i -> {
-            scanner.setTarget(NetUtil.numberToIp(NetUtil.ipToNumber(addresses[i].getHostAddress())));
-            scanner.scan(port);
+            String ip = addresses[i].getHostAddress();
+            if(!NetUtil.isBorder(ip) && !NetUtil.isLoopback(ip)) {
+                scanner.setTarget(NetUtil.numberToIp(NetUtil.ipToNumber(ip)));
+                scanner.scan(port);
+            }
         });
     }
 
     /**
-     * 目标集合常用端口扫描 scan ports which are used frequently in an IP range
+     * 目标集合常用端口扫描 scan ports which are used frequently in range
      *
      * @param addresses 目标集合 target host collection
      * @param start 开始索引 start index
@@ -93,8 +106,11 @@ public class NetScanner {
      */
     public void collectionSimpleScan(InetAddress[] addresses, int start, int end) {
         IntStream.range(start, end + 1).forEach( i -> {
-            scanner.setTarget(NetUtil.numberToIp(NetUtil.ipToNumber(addresses[i].getHostAddress())));
-            scanner.simpleScan();
+            String ip = addresses[i].getHostAddress();
+            if(!NetUtil.isBorder(ip) && !NetUtil.isLoopback(ip)) {
+                scanner.setTarget(NetUtil.numberToIp(NetUtil.ipToNumber(ip)));
+                scanner.simpleScan();
+            }
         });
     }
 }

@@ -2,7 +2,11 @@ package core.interact;
 
 import async.TaskPool;
 import async.task.PortScanTask;
+import config.Global;
+import constant.Network;
+import constant.lang.OutputFactory;
 import core.scanner.PortScanner;
+import util.NetUtil;
 import java.util.InputMismatchException;
 
 /**
@@ -13,52 +17,63 @@ import java.util.InputMismatchException;
 public class SubMenu2 {
 
     /**
-     * 处理方法
+     * 处理方法 handle method
      */
     public static void handle() {
-        System.out.print("\n[*] 目标ip地址: ");
+        System.out.print(OutputFactory.getInputIP(Global.RUNTIME_LANGUAGE));
         String ip = "";
         try {
             ip = InputScanner.getScanner().next();
         } catch (Exception e) {
-            System.out.println("ip地址读取失败");
+            NetUtil.wrongIpv4(Global.RUNTIME_LANGUAGE);
         }
-        System.out.println("\n准备扫描 [*] target " + ip);
-        System.out.println("\n[1] 常用端口扫描\n[2] 特定端口扫描\n[3] 全扫描\n[4] 返回\n[*] 退出\n");
-        System.out.print("选择: ");
+        if(!NetUtil.checkIPv4(ip)) {
+            NetUtil.wrongIpv4(Global.RUNTIME_LANGUAGE);
+            System.exit(0);
+        }
+        System.out.println(OutputFactory.getScanType(Global.RUNTIME_LANGUAGE));
+        System.out.print(OutputFactory.getSELECT(Global.RUNTIME_LANGUAGE));
         int select = 0;
         try {
             select = InputScanner.getScanner().nextInt();
         } catch (InputMismatchException e) {
             // 不处理
         }
-        System.out.println();
         switch(select) {
             // 常用端口扫描
             case 1:
+                System.out.println();
                 PortScanTask.runSingleTargetSimpleScanTask(TaskPool.maxThreads, ip);
                 break;
                 // 特定端口扫描
             case 2:
-                System.out.print("[*] 端口: ");
+                System.out.println();
+                System.out.print(OutputFactory.getInputPort(Global.RUNTIME_LANGUAGE));
                 int port = 0;
                 try {
                     port = InputScanner.getScanner().nextInt();
                 } catch (Exception e) {
-                    System.out.println("非法端口");
+                    NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                 }
-                System.out.println();
-                new PortScanner(ip).scan(port);
+                if(port > Network.PORT_START && port < Network.PORT_END) {
+                    System.out.println();
+                    new PortScanner(ip).scan(port);
+                } else {
+                    NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
+                    System.exit(0);
+                }
                 break;
                 // 全扫描
             case 3:
+                System.out.println();
                 PortScanTask.runSingleTargetScanTask(TaskPool.maxThreads, ip);
                 break;
                 // 返回
-            case 4: MainMenu.handle();
+            case 4:
+                MainMenu.handle();
             // 任意其他按键退出
             default:
-                System.out.println("Goodbye!");
+                System.out.println(OutputFactory.getGoodBye(Global.RUNTIME_LANGUAGE));
                 System.exit(0);
         }
     }

@@ -1,0 +1,46 @@
+arguments:
+    -t / --target       target IP
+    -c / --cidr         CIDR segment
+    -d / --domain       target host domain
+    -si / --subnet      One of the IPs in the subnet
+    -sm / --mask        mask of the subnet
+    -p / --port         port:
+                            0-65535 scam a target port
+                            simple  scan ports which are used frequently
+                            all     scan all ports
+    -m / --mode         mode:
+                            internet    scan on the Internet
+                            target      scan a target IP
+                            cidr        scan a CIDR segment
+                            domain      scan a domain
+                            subnet      scan a subnet
+    -l / --lang         language:
+                            zh  Chinese
+                            en  English
+    -v / --version      version
+    -h / --help         help
+
+jvm arguments:
+    -Xss        The amount of memory allocated for each thread started by the jvm
+    -Xms        Allocate initial (minimum) heap memory for jvm startup
+    -Xmx        The maximum memory allocated for the heap during the running of the jvm
+
+usages:
+    Scan a target port of hosts which are on the Internet: $ java -jar A-Scanner-v1.0.0.jar -m internet -p <port>
+    Scan ports of hosts on the Internet which are used frequently: $ java -jar A-Scanner-v1.0.0.jar -m internet -p simple
+    Scan all ports of hosts which are on the Internet: $ java -jar A-Scanner-v1.0.0.jar -m internet -p all
+    Scan ports of target host which are used frequently: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p simple
+    Scan all ports of target host: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p all
+    Scan a target port of a target host: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p <port>
+    Scan the common ports of surviving hosts on the CIDR network segment: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p simple
+    Scan a target port of surviving hosts on the CIDR network segment: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p <port>
+    Scan all ports of surviving hosts on the CIDR network segment: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p all
+    Scan the common ports of all hosts under the domain: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p simple
+    Scan the target port of all hosts under the domain: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p <port>
+    Scan all ports of all hosts under the domain: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p all
+    Scan the common ports of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p simple
+    Scan the target port of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p <port>
+    Scan all ports of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all
+    Get domain whois information: $ java -jar A-Scanner-v1.0.0.jar -m whois -d <domain>
+    interact mode: $ java -jar A-Scanner-v1.0.0.jar
+    set language: $ java -jar A-Scanner-v1.0.0.jar -l <zh/en>

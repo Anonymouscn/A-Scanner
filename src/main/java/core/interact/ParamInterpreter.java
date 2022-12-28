@@ -5,10 +5,12 @@ import async.task.NetScanTask;
 import async.task.PortScanTask;
 import com.google.common.base.Strings;
 import config.Global;
-import constant.Mode;
+import constant.lang.Language;
+import constant.param.Mode;
 import constant.Network;
-import constant.Port;
+import constant.param.Port;
 import core.scanner.PortScanner;
+import util.NetUtil;
 import java.util.stream.IntStream;
 
 /**
@@ -19,34 +21,77 @@ import java.util.stream.IntStream;
 public class ParamInterpreter {
 
     /**
-     * 读取参数
+     * 读取参数 read params
      *
-     * @param args 参数数组
+     * @param args 参数数组 param array
      * @return 具体参数
      */
     public static Param read(String[] args) {
         Param param = new Param();
-        IntStream.range(0, args.length).forEach(i -> {
-            if("-m".equals(args[i]) || "--mode".equals(args[i])) {
-                param.setMode(args[++i]);
-            } else if("-t".equals(args[i]) || "--target".equals(args[i])) {
-                param.setTarget(args[++i]);
-            } else if("-p".equals(args[i]) || "--port".equals(args[i])) {
-                param.setPort(args[++i]);
-            } else if("-d".equals(args[i]) || "--domain".equals(args[i])) {
-                param.setDomain(args[++i]);
-            } else if("-sn".equals(args[i]) || "--subnet".equals(args[i])) {
-                param.setSubnet(args[++i]);
-            } else if("-sm".equals(args[i]) || "--mask".equals(args[i])) {
-                param.setMask(args[++i]);
-            } else if("-c".equals(args[i]) || "--cidr".equals(args[i])) {
-                param.setCIDR(args[++i]);
-            } else if("-v".equals(args[i]) || "--version".equals(args[i])) {
-                param.setVersion(true);
-            } else if("-h".equals(args[i]) || "--help".equals(args[i])) {
-                param.setHelp(true);
-            }
-        });
+        try {
+            IntStream.range(0, args.length).forEach(i -> {
+                if("-l".equals(args[i]) || "--lang".equals(args[i])) {
+                    param.language = "zh".equals(args[++i]) ? Language.CHINESE : "en".equals(args[i]) ? Language.ENGLISH : Global.DEFAULT_LANGUAGE;
+                }
+            });
+        } catch (ArrayIndexOutOfBoundsException e) {
+            NetUtil.wrongExpress(Global.DEFAULT_LANGUAGE);
+            System.exit(0);
+        }
+        try {
+            IntStream.range(0, args.length).forEach(i -> {
+                // 模式 mode
+                if("-m".equals(args[i]) || "--mode".equals(args[i])) {
+                    param.setMode(args[++i]);
+                    // 目标主机 target host
+                } else if("-t".equals(args[i]) || "--target".equals(args[i])) {
+                    if(!NetUtil.checkIPv4(args[++i])) {
+                        NetUtil.wrongIpv4(param.language);
+                        System.exit(0);
+                    }
+                    param.setTarget(args[i]);
+                    // 端口 port
+                } else if("-p".equals(args[i]) || "--port".equals(args[i])) {
+                    param.setPort(args[++i]);
+                    // 域名 domain
+                } else if("-d".equals(args[i]) || "--domain".equals(args[i])) {
+                    if(!NetUtil.checkDomain(args[++i])) {
+                        NetUtil.wrongDomain(param.language);
+                        System.exit(0);
+                    }
+                    param.setDomain(args[i]);
+                    // 子网其一 IP |
+                } else if("-sn".equals(args[i]) || "--subnet".equals(args[i])) {
+                    if(!NetUtil.checkIPv4(args[++i])) {
+                        NetUtil.wrongIpv4(param.language);
+                        System.exit(0);
+                    }
+                    param.setSubnet(args[i]);
+                    // 子网掩码 subnet mask
+                } else if("-sm".equals(args[i]) || "--mask".equals(args[i])) {
+                    if(!NetUtil.checkMask(args[++i])) {
+                        NetUtil.wrongMask(param.language);
+                        System.exit(0);
+                    }
+                    param.setMask(args[i]);
+                    // CIDR 网段
+                } else if("-c".equals(args[i]) || "--cidr".equals(args[i])) {
+                    if(!NetUtil.checkCidr(args[++i])) {
+                        NetUtil.wrongCidr(param.language);
+                        System.exit(0);
+                    }
+                    param.setCIDR(args[i]);
+                    // 版本 version flag
+                } else if("-v".equals(args[i]) || "--version".equals(args[i])) {
+                    param.setVersion(true);
+                    // 帮助 help flag
+                } else if("-h".equals(args[i]) || "--help".equals(args[i])) {
+                    param.setHelp(true);
+                }
+            });
+        } catch (ArrayIndexOutOfBoundsException e) {
+            NetUtil.wrongExpress(param.language);
+        }
         return param;
     }
 
@@ -62,7 +107,7 @@ public class ParamInterpreter {
         }
         // 帮助 print help
         if(param.help) {
-            Help.print();
+            Help.print(param.language);
             return;
         }
         // 交互模式 interact mode
@@ -73,12 +118,14 @@ public class ParamInterpreter {
                             param.subnet == null &&
                             param.target == null &&
                             param.CIDR == null) {
+                Global.RUNTIME_LANGUAGE = param.language;
                 MainMenu.handle();
             } else {
-                wrongExpress();
+                NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
             }
             return;
         }
+        Global.RUNTIME_LANGUAGE = param.language == null ? Global.DEFAULT_LANGUAGE : param.language;
         // 模式 scan mode
         switch (param.mode) {
             // 因特网扫描 scan on the Internet
@@ -96,14 +143,14 @@ public class ParamInterpreter {
                             try {
                                 port = getPort(param.port);
                             } catch (Exception e) {
-                                wrongPort();
+                                NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                                 break;
                             }
                             NetScanTask.runInternetScanTask(TaskPool.maxThreads, port);
                             break;
                     }
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 }
                 break;
                 // 目标主机扫描 scan on a host
@@ -121,14 +168,14 @@ public class ParamInterpreter {
                             try {
                                 port = getPort(param.port);
                             } catch (Exception e) {
-                                wrongPort();
+                                NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                                 break;
                             }
                             new PortScanner(param.target).scan(port);
                             break;
                     }
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 }
                 break;
                 // CIDR 网段扫描
@@ -146,14 +193,14 @@ public class ParamInterpreter {
                             try {
                                 port = getPort(param.port);
                             } catch (Exception e) {
-                                wrongPort();
+                                NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                                 break;
                             }
                             NetScanTask.runCidrScanTask(TaskPool.maxThreads, port, param.CIDR);
                             break;
                     }
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 }
                 break;
                 // 域名扫描 scan on a domain
@@ -171,14 +218,15 @@ public class ParamInterpreter {
                             try {
                                 port = getPort(param.port);
                             } catch (Exception e) {
-                                wrongPort();
+                                NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                                 break;
                             }
                             NetScanTask.runDomainScanTask(TaskPool.maxThreads, port, param.domain);
                             break;
                     }
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
+                    System.exit(0);
                 }
                 break;
                 // 子网扫描 scan on a subnet
@@ -196,14 +244,14 @@ public class ParamInterpreter {
                             try {
                                 port = getPort(param.port);
                             } catch (Exception e) {
-                                wrongPort();
+                                NetUtil.wrongPort(Global.RUNTIME_LANGUAGE);
                                 break;
                             }
                             NetScanTask.runSubnetScanTask(TaskPool.maxThreads, port, param.subnet, param.mask);
                             break;
                     }
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 }
                 break;
                 // whois 查询 | whois search
@@ -211,15 +259,21 @@ public class ParamInterpreter {
                 if(param.domain != null) {
                     NetScanTask.getDomainInfo(param.domain);
                 } else {
-                    wrongExpress();
+                    NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 }
                 break;
             default:
-                wrongExpress();
+                NetUtil.wrongExpress(Global.RUNTIME_LANGUAGE);
                 break;
         }
     }
 
+    /**
+     * 获取端口 get an input port
+     *
+     * @param str port string
+     * @return 端口 port
+     */
     private static int getPort(String str) {
         int port;
         port = Integer.parseInt(str);
@@ -227,13 +281,5 @@ public class ParamInterpreter {
             throw new IllegalArgumentException();
         }
         return port;
-    }
-
-    private static void wrongExpress() {
-        System.out.println("无法解析的命令行表达式，详细查看帮助: $ java -jar A-Scanner-" + Global.VERSION + ".jar -h");
-    }
-
-    private static void wrongPort() {
-        System.out.println("非法端口值，详细查看帮助: $ java -jar A-Scanner-" + Global.VERSION + ".jar -h");
     }
 }

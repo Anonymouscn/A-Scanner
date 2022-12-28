@@ -103,7 +103,7 @@ public class NetScanTask {
     }
 
     /**
-     * CIDR 网段全端口扫描
+     * CIDR 网段全端口扫描 scan all ports on the CIDR network segment
      *
      * @param threads 线程数 number of threads
      * @param cidr Cidr 网段 CIDR network segment
@@ -128,7 +128,7 @@ public class NetScanTask {
     }
 
     /**
-     * 获取域名信息 get info of domain
+     * 获取域名信息 get whois info of domain
      *
      * @param domain 域名 domain
      */
@@ -136,7 +136,6 @@ public class NetScanTask {
         WhoisClient client = new WhoisClient();
         try {
             client.connect(WhoisClient.DEFAULT_HOST);
-            System.out.println("域名信息: ");
             System.out.println(client.query(domain));
         } catch (IOException e) {
             System.out.println("连接不上 whois 服务器");

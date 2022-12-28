@@ -1,6 +1,8 @@
 package core.scanner;
 
+import config.Global;
 import constant.Network;
+import constant.lang.OutputFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,7 +41,7 @@ public class PortScanner {
         try {
             Socket s = new Socket();
             s.connect(new InetSocketAddress(target, port), Network.SOCKET_TIMEOUT);
-            System.out.println("[+] " + target + ":" + port + " 端口开放");
+            System.out.println("[+] " + target + ":" + port + OutputFactory.getOpeningPort(Global.RUNTIME_LANGUAGE));
             s.close();
         } catch (IOException e) {
             // 不做处理 nothing to do
@@ -52,7 +54,7 @@ public class PortScanner {
             try {
                 Socket s = new Socket();
                 s.connect(new InetSocketAddress(target, i), Network.SOCKET_TIMEOUT);
-                System.out.println("[+] " + target + ":" + i + " 端口开放");
+                System.out.println("[+] " + target + ":" + i + OutputFactory.getOpeningPort(Global.RUNTIME_LANGUAGE));
                 s.close();
             } catch (IOException e) {
                 // 不做处理 nothing to do
@@ -72,7 +74,7 @@ public class PortScanner {
             try {
                 Socket s = new Socket();
                 s.connect(new InetSocketAddress(target, Network.commonPorts[i].port), Network.SOCKET_TIMEOUT);
-                System.out.println("[+] " + target + ":" + Network.commonPorts[i].port + " 端口开放" + " guess: " + Network.commonPorts[i].info);
+                System.out.println("[+] " + target + ":" + Network.commonPorts[i].port + OutputFactory.getOpeningPort(Global.RUNTIME_LANGUAGE) + OutputFactory.getGuess(Global.RUNTIME_LANGUAGE) + Network.commonPorts[i].info);
                 s.close();
             } catch (IOException e) {
                 // 不做处理 nothing to do
@@ -82,13 +84,13 @@ public class PortScanner {
 
     }
 
-    /** 常用端口扫描 常用端口扫描 scan ports which are used frequently */
+    /** 常用端口扫描 scan ports which are used frequently */
     public void simpleScan() {
         Arrays.stream(Network.commonPorts).forEach(p -> {
             try {
                 Socket s = new Socket();
                 s.connect(new InetSocketAddress(target, p.port), Network.SOCKET_TIMEOUT);
-                System.out.println("[+] " + target + ":" + p.port + " 端口开放" + " guess: " + p.info);
+                System.out.println("[+] " + target + ":" + p.port + OutputFactory.getOpeningPort(Global.RUNTIME_LANGUAGE) + OutputFactory.getGuess(Global.RUNTIME_LANGUAGE) + p.info);
                 s.close();
             } catch (IOException e) {
                 // 不做处理 nothing to do

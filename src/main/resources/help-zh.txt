@@ -1,0 +1,46 @@
+参数:
+    -t / --target       目标 IP
+    -c / --cidr         CIDR 网段
+    -d / --domain       目标域名
+    -si / --subnet      所在子网其一 IP
+    -sm / --mask        子网掩码
+    -p / --port         端口:
+                            0-65535 扫描指定端口
+                            simple  常用端口
+                            all     所有端口
+    -m / --mode         模式:
+                            internet    全网扫描
+                            target      目标 IP 扫描
+                            cidr        网域扫描
+                            domain      目标域名扫描
+                            subnet      子网扫描
+    -l / --lang         语言:
+                            zh  中文
+                            en  英文
+    -v / --version      版本
+    -h / --help         帮助
+
+jvm 参数:
+    -Xss        为 jvm 启动的每个线程分配的内存大小
+    -Xms        为 jvm 启动时分配堆初始(最小)内存
+    -Xmx        为 jvm 运行过程中分配堆最大内存
+
+示例用法:
+    全网扫描指定端口: $ java -jar A-Scanner-v1.0.0.jar -m internet -p <port>
+    全网扫描常用端口: $ java -jar A-Scanner-v1.0.0.jar -m internet -p simple
+    全网扫描所有端口: $ java -jar A-Scanner-v1.0.0.jar -m internet -p all
+    扫描目标主机常用端口: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p simple
+    扫描目标主机全部端口: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p all
+    扫描目标主机指定端口: $ java -jar A-Scanner-v1.0.0.jar -m target -t <ip> -p <port>
+    扫描 CIDR 网段存活主机常用端口: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p simple
+    扫描 CIDR 网段存活主机指定端口: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p <port>
+    扫描 CIDR 网段存活主机全部端口: $ java -jar A-Scanner-v1.0.0.jar -m cidr -c <cidr> -p all
+    扫描域名下所有主机常用端口: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p simple
+    扫描域名下所有主机指定端口: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p <port>
+    扫描域名下所有主机全部端口: $ java -jar A-Scanner-v1.0.0.jar -m domain -d <domain> -p all
+    扫描子网下所有存活主机常用端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p simple
+    扫描子网下所有存活主机指定端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p <port>
+    扫描子网下所有存活主机所有端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all
+    获取域名 whois 信息: $ java -jar A-Scanner-v1.0.0.jar -m whois -d <domain>
+    交互模式: $ java -jar A-Scanner-v1.0.0.jar
+    指定语言: $ java -jar A-Scanner-v1.0.0.jar -l <zh/en>

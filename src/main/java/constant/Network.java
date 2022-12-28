@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
  */
 public class Network {
 
-    /** socket 超时时间 */
-    public static final int SOCKET_TIMEOUT = 3000;
+    /** socket 超时时间 | socket timeout */
+    public static final int SOCKET_TIMEOUT = 200;
 
     /** 开始端口 start port*/
     public static final int PORT_START = 0;
@@ -44,48 +44,48 @@ public class Network {
     /** 私有 C 类地址结束范围 -> 192.168.255.255 */
     public static final Long PRIVATE_C_END = 3232301055L;
 
-    /** 本地地址 local loopback IP address */
-    public static final Long LOCALHOST = 2130706433L;
+    /** 回环地址 | loopback IP address */
+    public static final String LOOPBACK = "127.0.0.1";
 
     /** 常用开放端口 ｜ commonly used open ports */
     public static CommonPort[] commonPorts = new CommonPort[]{
-            new CommonPort(21, "ftp/tftp/vsftpd 文件传输协议"),
-            new CommonPort(22, "ssh 远程连接"),
-            new CommonPort(23, "telnet 远程连接"),
-            new CommonPort(25, "smtp 邮件服务"),
-            new CommonPort(53, "dns 域名解析服务"),
-            new CommonPort(67, "dhcp 服务"),
-            new CommonPort(68, "dhcp 服务"),
-            new CommonPort(80, "http web 服务"),
+            new CommonPort(21, "ftp/tftp/vsftpd"),
+            new CommonPort(22, "ssh"),
+            new CommonPort(23, "telnet"),
+            new CommonPort(25, "smtp"),
+            new CommonPort(53, "dns"),
+            new CommonPort(67, "dhcp"),
+            new CommonPort(68, "dhcp"),
+            new CommonPort(80, "http"),
             new CommonPort(110, "pop3"),
-            new CommonPort(139, "Samba服务"),
+            new CommonPort(139, "Samba"),
             new CommonPort(143, "imap"),
-            new CommonPort(161, "snmp协议"),
-            new CommonPort(389, "ldap目录访问协议"),
-            new CommonPort(443, "https web服务"),
-            new CommonPort(445, "smb服务"),
-            new CommonPort(512, "Linux Rexec 服务"),
-            new CommonPort(513, "Linux Rexec 服务"),
-            new CommonPort(514, "Linux Rexec 服务"),
-            new CommonPort(873, "rsync 服务"),
+            new CommonPort(161, "snmp"),
+            new CommonPort(389, "ldap"),
+            new CommonPort(443, "https"),
+            new CommonPort(445, "smb"),
+            new CommonPort(512, "Linux Rexec"),
+            new CommonPort(513, "Linux Rexec"),
+            new CommonPort(514, "Linux Rexec"),
+            new CommonPort(873, "rsync"),
             new CommonPort(1080, "socket"),
-            new CommonPort(1352, "lotus domino 邮件服务"),
+            new CommonPort(1352, "lotus domino"),
             new CommonPort(1433, "mssql"),
             new CommonPort(1521, "oracle"),
-            new CommonPort(2049, "nfs 服务"),
-            new CommonPort(2181, "zookeeper 服务"),
+            new CommonPort(2049, "nfs"),
+            new CommonPort(2181, "zookeeper"),
             new CommonPort(2375, "docker remote api"),
             new CommonPort(3306, "mysql"),
-            new CommonPort(3389, "rdp 远程桌面连接"),
-            new CommonPort(4848, "glassfish 控制台"),
-            new CommonPort(5000, "sybase/DB2 数据库"),
-            new CommonPort(5432, "postgresql 数据库"),
-            new CommonPort(5632, "pcanywhere 服务"),
+            new CommonPort(3389, "rdp"),
+            new CommonPort(4848, "glassfish console"),
+            new CommonPort(5000, "sybase/DB2"),
+            new CommonPort(5432, "postgresql"),
+            new CommonPort(5632, "pcanywhere"),
             new CommonPort(5900, "vnc"),
-            new CommonPort(6379, "redis 数据库"),
+            new CommonPort(6379, "redis"),
             new CommonPort(7001, "weblogic"),
             new CommonPort(7002, "weblogic"),
-            new CommonPort(8069, "zabbix 服务"),
+            new CommonPort(8069, "zabbix"),
             new CommonPort(8161, "activemq"),
             new CommonPort(8080, "Jboss/Tomcat/Resin/socket"),
             new CommonPort(8081, "Jboss/Tomcat/Resin/socket"),
@@ -101,7 +101,7 @@ public class Network {
             new CommonPort(8443, "web"),
             new CommonPort(8888, "web"),
             new CommonPort(9000, "fastcgi"),
-            new CommonPort(9090, "Websphere 控制台"),
+            new CommonPort(9090, "Websphere console"),
             new CommonPort(9200, "elasticsearch"),
             new CommonPort(9300, "elasticsearch"),
             new CommonPort(11211, "memcached"),
@@ -110,15 +110,15 @@ public class Network {
     };
 
     /**
-     * 常用端口类定义
+     * 常用端口类定义 define of port object
      */
     @NoArgsConstructor
     @AllArgsConstructor
     @Data
     public static class CommonPort {
-        // 端口
+        // 端口 port
         public int port;
-        // 信息
+        // 信息 info
         public String info;
     }
 }
