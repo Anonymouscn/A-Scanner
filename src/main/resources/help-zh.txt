@@ -41,6 +41,7 @@ jvm 参数:
     扫描子网下所有存活主机常用端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p simple
     扫描子网下所有存活主机指定端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p <port>
     扫描子网下所有存活主机所有端口: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all
+    使用 '>' 输出重定向存储扫描结果: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all > out.txt
     获取域名 whois 信息: $ java -jar A-Scanner-v1.0.0.jar -m whois -d <domain>
     交互模式: $ java -jar A-Scanner-v1.0.0.jar
     指定语言: $ java -jar A-Scanner-v1.0.0.jar -l <zh/en>

@@ -41,6 +41,7 @@ usages:
     Scan the common ports of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p simple
     Scan the target port of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p <port>
     Scan all ports of all surviving hosts under the subnet: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all
+    Use '>' output redirection to store scan results: $ java -jar A-Scanner-v1.0.0.jar -m subnet -sn <ip> -sm <mask> -p all > out.txt
     Get domain whois information: $ java -jar A-Scanner-v1.0.0.jar -m whois -d <domain>
     interact mode: $ java -jar A-Scanner-v1.0.0.jar
     set language: $ java -jar A-Scanner-v1.0.0.jar -l <zh/en>
